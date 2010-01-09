@@ -10,6 +10,8 @@
 ;;; Commentary:
 
 ;; TODO
+;; menu items
+;; sort by time
 ;; rename to something spiffy, like "iTimer"
 ;; customizable exit action, such as restore window configuration
 ;; support canceling timers
@@ -57,7 +59,7 @@
     (define-key map (kbd "q") 'bury-buffer)
     (define-key map (kbd "p") #'previous-timer)
     (define-key map (kbd "n") #'next-timer)
-    (define-key map (kbd "g") 'revert-buffer)
+    (define-key map (kbd "g") 'itimer-update)
     (setq itimer-mode-map map)))
 
 (defun next-timer () (interactive) (next-line 3))
@@ -71,11 +73,11 @@
   (use-local-map itimer-mode-map)
   (setq major-mode 'itimer-mode
         mode-name "Timer")
-  (set (make-local-variable 'revert-buffer-function) #'timer-update)
+  (set (make-local-variable 'revert-buffer-function) #'itimer-update)
   (run-mode-hooks 'itimer-mode-hook)
   )
 
-(defun timer-update (arg &optional silent)
+(defun itimer-update (arg &optional silent)
   (interactive "P")
   (let ((line (line-number-at-pos (point))))
     (unless silent
@@ -84,22 +86,34 @@
     (erase-buffer)
     (setq ts timer-list)
     (while (not (null ts))
-      (insert (format-time-string "%c" (timer--time (car ts))))
-      (insert "\n\t")
-      (insert (format-seconds "%Y, %D, %H, %M, %z%S"
-               (time-to-seconds
-                (time-subtract (timer--time (car ts)) (current-time)))))
-      (insert "\n\t")
-      (insert (symbol-name (timer--function (car ts))))
-      (insert " ")
-      (insert (format "%S" (timer--args (car ts))))
+      (insert (itimer-format-timer (car ts)))
       (newline)
       (pop ts))
     (setq buffer-read-only t)
     (goto-char (point-min))
-    (forward-line (1- line))))
+    (forward-line (1- line))
+    (unless silent
+      (message "Updating timer list...done"))
+    ))
+
+;; TODO
+;;   prettier output, use columns, fixed width
+;;   customizable: column width
+;;   customizable: display stop time or remaining time
+(defun itimer-format-timer (timer)
+  (concat
+   (format-time-string "%c" (timer--time timer))
+   "\n\t"
+   (format-seconds "%Y, %D, %H, %M, %z%S"
+                   (time-to-seconds
+                    (time-subtract (timer--time timer) (current-time))))
+   "\n\t"
+   (symbol-name (timer--function timer))
+   " "
+   (format "%S" (timer--args timer))
+   ))
  
-(defun list-timers (&optional no-select)
+(defun itimer-list-timers (&optional no-select)
   (interactive "P")
   (let ((buf (get-buffer-create timer-list-buffer-name)))
     (if no-select
@@ -109,6 +123,6 @@
     (with-current-buffer buf
       (when (not (eq major-mode 'itimer-mode))
         (itimer-mode))
-      (timer-update nil))))
+      (itimer-update nil))))
 
 (provide 'itimer)
