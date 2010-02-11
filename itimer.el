@@ -47,7 +47,7 @@
 ;; timer-until  
 ;; negative if timer will run in future?
 
-(define-derived-mode itimer-mode fundamental-mode "Timer")
+;;(define-derived-mode itimer-mode fundamental-mode "Timer")
 
 (defvar timer-list-buffer-name " *Timer List*"
   "Name of buffer to display the timer list")
@@ -62,8 +62,8 @@
     (define-key map (kbd "g") 'itimer-update)
     (setq itimer-mode-map map)))
 
-(defun next-timer () (interactive) (next-line 3))
-(defun previous-timer () (interactive) (previous-line 3))
+(defun next-timer () (interactive) (forward-line 3))
+(defun previous-timer () (interactive) (forward-line -3))
 
 ;;(add-hook 'itimer-mode-hook 'timer-key-setup)
 
@@ -105,7 +105,7 @@
    (format-time-string "%c" (timer--time timer))
    "\n\t"
    (format-seconds "%Y, %D, %H, %M, %z%S"
-                   (time-to-seconds
+                   (float-time
                     (time-subtract (timer--time timer) (current-time))))
    "\n\t"
    (symbol-name (timer--function timer))
