@@ -23,18 +23,18 @@
 ;; display idle timer list, also
 
 ;; note to self, here are some important functions:
-;; timer--activate 	timer--args
-;; timer--function 	timer--high-seconds
-;; timer--idle-delay 	timer--low-seconds
-;; timer--repeat-delay 	timer--time
-;; timer--time-less-p 	timer--triggered
-;; timer--usecs 	timer-activate
-;; timer-activate-when-idle 	timer-create
-;; timer-duration 	timer-event-handler
-;; timer-inc-time 	timer-next-integral-multiple-of-time
-;; timer-relative-time 	timer-set-function
-;; timer-set-idle-time 	timer-set-time
-;; timer-set-time-with-usecs 	timer-until
+;; timer--activate      timer--args
+;; timer--function      timer--high-seconds
+;; timer--idle-delay    timer--low-seconds
+;; timer--repeat-delay  timer--time
+;; timer--time-less-p   timer--triggered
+;; timer--usecs         timer-activate
+;; timer-activate-when-idle     timer-create
+;; timer-duration       timer-event-handler
+;; timer-inc-time       timer-next-integral-multiple-of-time
+;; timer-relative-time  timer-set-function
+;; timer-set-idle-time  timer-set-time
+;; timer-set-time-with-usecs    timer-until
 
 ;; (timer-duration string)
 ;; return number of seconds specified by string
@@ -44,7 +44,7 @@
 
 ;; format-time-string
 
-;; timer-until  
+;; timer-until
 ;; negative if timer will run in future?
 
 ;;(define-derived-mode itimer-mode fundamental-mode "Timer")
@@ -112,7 +112,7 @@
    " "
    (format "%S" (timer--args timer))
    ))
- 
+
 (defun itimer-list-timers (&optional no-select)
   (interactive "P")
   (let ((buf (get-buffer-create timer-list-buffer-name)))
