@@ -57,7 +57,7 @@
 
 ;;(define-derived-mode itimer-mode fundamental-mode "Timer")
 
-(defconst timer-list-buffer-name " * timer-list*"
+(defconst itimer-buffer-name " *timer-list*"
   "Name of buffer to display the timer list")
 
 (defvar itimer-mode-map nil)
@@ -121,7 +121,7 @@
 
 (defun itimer-list-timers (&optional no-select)
   (interactive "P")
-  (let ((buf (get-buffer-create timer-list-buffer-name)))
+  (let ((buf (get-buffer-create itimer-buffer-name)))
     (if no-select
         (display-buffer buf)
       (pop-to-buffer buf))
