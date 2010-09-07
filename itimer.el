@@ -74,7 +74,12 @@
     (define-key map (kbd "g") 'itimer-update)
     (setq itimer-mode-map map)))
 
-(defun itimer-next-timer () (interactive) (forward-line 1))
+(defun itimer-next-timer ()
+  (interactive)
+  (let ((line (line-number-at-pos (point))))
+    (when (< line (length timer-list))
+      (forward-line 1))))
+
 (defun itimer-previous-timer () (interactive) (forward-line -1))
 
 ;;(add-hook 'itimer-mode-hook 'timer-key-setup)
