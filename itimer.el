@@ -72,6 +72,8 @@
     (define-key map (kbd "p") #'itimer-previous-timer)
     (define-key map (kbd "n") #'itimer-next-timer)
     (define-key map (kbd "g") 'itimer-update)
+    (define-key map (kbd "a") #'itimer-activate-timer)
+    (define-key map (kbd "k") #'itimer-cancel-timer)
     (setq itimer-mode-map map)))
 
 (defun itimer-next-timer ()
@@ -93,6 +95,19 @@
   (set (make-local-variable 'revert-buffer-function) #'itimer-update)
   (run-mode-hooks 'itimer-mode-hook)
   )
+
+(defun itimer-activate-timer ()
+  (interactive)
+  "Activate timer at point"
+  (when (y-or-n-p "Activate timer? ")
+    (timer-activate (itimer-current-timer))))
+
+(defun itimer-cancel-timer ()
+  (interactive)
+  "Kill timer at point"
+  (when (y-or-n-p "Kill timer? ")
+    (cancel-timer (itimer-current-timer))
+    (itimer-update t)))
 
 (defun itimer-update (arg &optional silent)
   (interactive "P")
