@@ -41,6 +41,10 @@
 ;;   - change timer--time
 ;;   - change timer--function
 
+;; FIXME
+;; if the list of timers changes while we are in the buffer,
+;; itimer-current-timer could return the wrong timer.
+
 ;; note to self, here are some important functions:
 ;; timer--activate      timer--args
 ;; timer--function      timer--high-seconds
@@ -104,6 +108,14 @@
     (unless silent
       (message "Updating timer list...done"))
     ))
+
+(defun itimer-current-timer ()
+  "Get the timer at cursor."
+  (itimer-assert-itimer-mode)
+  (let ((line (line-number-at-pos)))
+    (if (> line (length timer-list))
+        (error (format "itimer invalid timer number: %d" line))
+      (nth (1- line) timer-list))))
 
 (defun itimer-format-timer (timer)
   (concat
