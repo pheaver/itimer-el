@@ -62,22 +62,22 @@
 
 (defvar itimer-mode-map nil)
 
-(defun timer-setup-map ()
+(defun itimer-setup-map ()
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "q") 'bury-buffer)
-    (define-key map (kbd "p") #'previous-timer)
-    (define-key map (kbd "n") #'next-timer)
+    (define-key map (kbd "p") #'itimer-previous-timer)
+    (define-key map (kbd "n") #'itimer-next-timer)
     (define-key map (kbd "g") 'itimer-update)
     (setq itimer-mode-map map)))
 
-(defun next-timer () (interactive) (forward-line 3))
-(defun previous-timer () (interactive) (forward-line -3))
+(defun itimer-next-timer () (interactive) (forward-line 1))
+(defun itimer-previous-timer () (interactive) (forward-line -1))
 
 ;;(add-hook 'itimer-mode-hook 'timer-key-setup)
 
 (defun itimer-mode ()
   (kill-all-local-variables)
-  (timer-setup-map)
+  (itimer-setup-map)
   (use-local-map itimer-mode-map)
   (setq major-mode 'itimer-mode
         mode-name "Timer")
@@ -87,6 +87,7 @@
 
 (defun itimer-update (arg &optional silent)
   (interactive "P")
+  (itimer-assert-itimer-mode)
   (let ((line (line-number-at-pos (point))))
     (unless silent
       (message "Updating timer list..."))
@@ -104,21 +105,18 @@
       (message "Updating timer list...done"))
     ))
 
-;; TODO
-;;   prettier output, use columns, fixed width
-;;   customizable: column width
-;;   customizable: display stop time or remaining time
 (defun itimer-format-timer (timer)
   (concat
-   (format-time-string "%c" (timer--time timer))
-   "\n\t"
-   (format-seconds "%Y, %D, %H, %M, %z%S"
-                   (float-time
-                    (time-subtract (timer--time timer) (current-time))))
-   "\n\t"
-   (symbol-name (timer--function timer))
-   " "
-   (format "%S" (timer--args timer))
+   (itimer-format-column (format-time-string "%c" (timer--time timer))
+                         30 :left)
+   (itimer-format-column (format-seconds "%Y, %D, %z%.2h:%.2m:%.2s"
+                          (float-time
+                           (time-subtract (timer--time timer) (current-time))))
+                         12 :left)
+   (itimer-format-column (concat (symbol-name (timer--function timer))
+                                 " "
+                                 (format "%S" (timer--args timer)))
+                         38 :left)
    ))
 
 (defun itimer-list-timers (&optional no-select)
@@ -132,5 +130,24 @@
       (when (not (eq major-mode 'itimer-mode))
         (itimer-mode))
       (itimer-update nil))))
+
+;; --------------------
+;; the code in this block was copied from ibuffer
+
+(defsubst itimer-assert-itimer-mode ()
+  (assert (derived-mode-p 'itimer-mode)))
+
+(defun itimer-format-column (str width alignment)
+  (let ((pad (- width (length str))))
+    (if (> pad 0)
+        (let ((left (make-string (/ pad 2) ?\s))
+              (right (make-string (- pad (/ pad 2)) ?\s)))
+          (case alignment
+            (:right (concat left right str))
+            (:center (concat left str right))
+            (t (concat str left right))))
+      (concat (substring str 0 (- width 3)) "..."))))
+
+;; --------------------
 
 (provide 'itimer)
