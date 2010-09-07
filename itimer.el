@@ -128,7 +128,7 @@
    (itimer-format-column (concat (symbol-name (timer--function timer))
                                  " "
                                  (format "%S" (timer--args timer)))
-                         38 :left)
+                         35 :left)
    ))
 
 (defun itimer-list-timers (&optional no-select)
