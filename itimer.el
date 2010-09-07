@@ -67,7 +67,7 @@
 
 ;;(define-derived-mode itimer-mode fundamental-mode "Timer")
 
-(defvar timer-list-buffer-name " *Timer List*"
+(defconst timer-list-buffer-name " * timer-list*"
   "Name of buffer to display the timer list")
 
 (defvar itimer-mode-map nil)
