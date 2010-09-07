@@ -28,17 +28,18 @@
 ;;; Commentary:
 
 ;; TODO
-;; menu items
-;; sort by time
-;; rename to something spiffy, like "iTimer"
-;; customizable exit action, such as restore window configuration
-;; support canceling timers
-;; support editing timer function
-;; support editing timer time, including adding/substracting relative time
-;; prettier output, modeled after list-processes and ibuffer
-;; colorize
-;; activate timer
-;; display idle timer list, also
+;; visualization:
+;;   - colorized output
+;;   - support sorting
+;;   - custom formats, like ibuffer
+;;   - customize window behavior
+;;     e.g. an option like ibuffer-use-other-window,
+;;     or customizable exit action such as restore window configuration
+;; timer modification:
+;;   - create timer
+;;   - delete timer
+;;   - change timer--time
+;;   - change timer--function
 
 ;; note to self, here are some important functions:
 ;; timer--activate      timer--args
@@ -53,17 +54,6 @@
 ;; timer-relative-time  timer-set-function
 ;; timer-set-idle-time  timer-set-time
 ;; timer-set-time-with-usecs    timer-until
-
-;; (timer-duration string)
-;; return number of seconds specified by string
-
-;; current-time
-;; (sechigh seclow usec)
-
-;; format-time-string
-
-;; timer-until
-;; negative if timer will run in future?
 
 ;;(define-derived-mode itimer-mode fundamental-mode "Timer")
 
