@@ -33,8 +33,7 @@
 ;;   - support sorting
 ;;   - custom formats, like ibuffer
 ;;   - customize window behavior
-;;     e.g. an option like ibuffer-use-other-window,
-;;     or customizable exit action such as restore window configuration
+;;   - customizable exit action such as restore window configuration
 ;; timer modification:
 ;;   - create timer
 ;;   - delete timer
@@ -63,6 +62,11 @@
 
 (defconst itimer-buffer-name " *timer-list*"
   "Name of buffer to display the timer list")
+
+(defcustom itimer-use-other-window nil
+  "If non-nil, display Itimer in another window by default."
+  :type 'boolean
+  :group 'itimer)
 
 (defvar itimer-mode-map nil)
 
@@ -151,12 +155,13 @@
                          35 :left)
    ))
 
-(defun itimer-list-timers (&optional no-select)
+(defun itimer-list-timers (&optional other-window-p noselect)
   (interactive "P")
+  (when itimer-use-other-window (setq other-window-p t))
   (let ((buf (get-buffer-create itimer-buffer-name)))
-    (if no-select
-        (display-buffer buf)
-      (pop-to-buffer buf))
+    (if other-window-p
+        (if noselect (display-buffer buf t) (pop-to-buffer buf))
+      (if noselect (display-buffer buf) (switch-to-buffer buf)))
 
     (with-current-buffer buf
       (when (not (eq major-mode 'itimer-mode))
