@@ -113,7 +113,7 @@
     (cancel-timer (itimer-current-timer))
     (itimer-update t)))
 
-(defun itimer-update (arg &optional silent)
+(defun itimer-update (&optional silent)
   (interactive "P")
   (itimer-assert-itimer-mode)
   (let ((line (line-number-at-pos (point))))
