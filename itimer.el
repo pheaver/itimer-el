@@ -68,14 +68,19 @@
   :type 'boolean
   :group 'itimer)
 
+(defvar itimer-parent-buffer nil
+  "Parent buffer of itimer list buffer.")
+(make-variable-buffer-local 'itimer-parent-buffer)
+
 (defvar itimer-mode-map nil)
 
 (defun itimer-setup-map ()
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "q") 'bury-buffer)
+    (define-key map (kbd "q") #'itimer-quit)
     (define-key map (kbd "p") #'itimer-previous-timer)
     (define-key map (kbd "n") #'itimer-next-timer)
     (define-key map (kbd "g") 'itimer-update)
+    (define-key map (kbd "c") #'itimer-create-timer)
     (define-key map (kbd "a") #'itimer-activate-timer)
     (define-key map (kbd "k") #'itimer-cancel-timer)
     (setq itimer-mode-map map)))
@@ -133,6 +138,13 @@
       (message "Updating timer list...done"))
     ))
 
+(defun itimer-create-timer ()
+  "Create a new timer.  Runs `run-at-time' and then updates the timer list."
+  (interactive)
+  (call-interactively 'run-at-time)
+  (when (derived-mode-p 'itimer-mode)
+    (itimer-update t)))
+
 (defun itimer-current-timer ()
   "Get the timer at cursor."
   (itimer-assert-itimer-mode)
@@ -158,7 +170,8 @@
 (defun itimer-list-timers (&optional other-window-p noselect)
   (interactive "P")
   (when itimer-use-other-window (setq other-window-p t))
-  (let ((buf (get-buffer-create itimer-buffer-name)))
+  (let ((parent-buff (current-buffer))
+        (buf (get-buffer-create itimer-buffer-name)))
     (if other-window-p
         (if noselect (display-buffer buf t) (pop-to-buffer buf))
       (if noselect (display-buffer buf) (switch-to-buffer buf)))
@@ -166,7 +179,19 @@
     (with-current-buffer buf
       (when (not (eq major-mode 'itimer-mode))
         (itimer-mode))
-      (itimer-update nil))))
+      (itimer-update nil)
+      (setq itimer-parent-buffer parent-buff))))
+
+;; most of this was taken from `undo-tree-visualizer-quit' in undo-tree.el
+(defun itimer-quit ()
+  (interactive)
+  (itimer-assert-itimer-mode)
+  (let ((parent itimer-parent-buffer)
+        window)
+    (kill-buffer nil)
+    (if (setq window (get-buffer-window parent))
+        (select-window window)
+      (switch-to-buffer parent))))
 
 ;; --------------------
 ;; the code in this block was copied from ibuffer
