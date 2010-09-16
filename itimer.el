@@ -168,8 +168,16 @@
    ))
 
 (defun itimer-list-timers (&optional other-window-p noselect)
+  "Run Itimer, switching to a buffer and populating it with a list of timers.
+
+All arguments are optional.
+OTHER-WINDOW-P says to use other window.  Note that when itimer-use-other-window
+is non-nil, then the meaning of OTHER-WINDOW-P is actually inverted.
+If NOSELECT is non-nil, then do not select the newly created buffer if it was
+created in other window."
+
   (interactive "P")
-  (when itimer-use-other-window (setq other-window-p t))
+  (when itimer-use-other-window (setq other-window-p (not other-window-p)))
   (let ((parent-buff (current-buffer))
         (buf (get-buffer-create itimer-buffer-name)))
     (if other-window-p
