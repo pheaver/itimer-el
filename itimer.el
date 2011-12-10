@@ -1,6 +1,6 @@
 ;;; itimer.el -- list and operate on emacs timers
 
-;; Copyright (C) 2009, 2010 Philip Weaver
+;; Copyright (C) 2009, 2010, 2011 Philip Weaver
 
 ;; Author: Philip Weaver <philip.weaver@gmail.com>
 ;; Maintainer: Philip Weaver <philip.weaver@gmail.com>
