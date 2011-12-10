@@ -161,9 +161,10 @@
                           (float-time
                            (time-subtract (timer--time timer) (current-time))))
                          12 :left)
-   (itimer-format-column (concat (symbol-name (timer--function timer))
+   (itimer-format-column (format "%S %S"
+                                 (timer--function timer)
                                  " "
-                                 (format "%S" (timer--args timer)))
+                                 (timer--args timer))
                          35 :left)
    ))
 
